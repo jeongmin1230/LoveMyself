@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -14,13 +16,8 @@
         tools:targetApi="31">
         <activity
             android:name=".screen.Login"
-            android:exported="false"
-            android:label="@string/title_activity_login"
-            android:theme="@style/Theme.LoveMyself" />
-        <activity
-            android:name=".screen.MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
+            android:label="칭찬 일기장"
             android:theme="@style/Theme.LoveMyself">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

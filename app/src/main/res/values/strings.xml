@@ -1,4 +1,19 @@
 <resources>
     <string name="app_name">LoveMyself</string>
+    <string name="nav_route_login">login</string>
+    <string name="nav_route_main">main</string>
+    <string name="nav_route_register">register</string>
     <string name="title_activity_login">Login</string>
+    <string name="login_screen">로그인</string>
+    <string name="main_screen">메인</string>
+    <string name="email">이메일</string>
+    <string name="password">비밀 번호</string>
+    <string name="do_login">로그인</string>
+    <string name="or">---- 또는 ----</string>
+    <string name="sing_in_up_google">구글 회원 가입</string>
+    <string name="register">회원가입</string>
+    <string name="name">이름</string>
+    <string name="confirm_password">비밀번호 확인</string>
+    <string name="register_complete">회원가입을 완료 했습니다.\n회원가입 한 아이디로 로그인 해 주세요</string>
+    <string name="login_fail">로그인에 실패 했습니다.</string>
 </resources>
