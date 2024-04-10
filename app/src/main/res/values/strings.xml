@@ -14,6 +14,10 @@
     <string name="register">회원가입</string>
     <string name="name">이름</string>
     <string name="confirm_password">비밀번호 확인</string>
-    <string name="register_complete">회원가입을 완료 했습니다.\n회원가입 한 아이디로 로그인 해 주세요</string>
+    <string name="warning">빈칸을 모두 입력 해 주세요.</string>
+    <string name="register_complete">회원가입을 완료 했습니다.\n회원가입 한 아이디로 로그인 해 주세요</string>]
+    <string name="register_fail">회원가입에 실패 했습니다. 네트워크 연결을 확인하고 다시 시도 해 주세요.</string>
     <string name="login_fail">로그인에 실패 했습니다.</string>
+    <string name="today_mention">오늘은 %s월 %s일</string>
+    <string name="please_praise_for_me">나를 위한 칭찬 한 마디 해 주세요.</string>
 </resources>

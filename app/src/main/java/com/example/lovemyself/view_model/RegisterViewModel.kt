@@ -10,26 +10,25 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 
 class RegisterViewModel: ViewModel() {
-    private val auth = FirebaseAuth.getInstance()
-
     val name = mutableStateOf("")
     val email = mutableStateOf("")
     val password = mutableStateOf("")
     val confirmPassword = mutableStateOf("")
 
     fun register(context: Context, navController: NavHostController) {
-        val database = FirebaseDatabase.getInstance().getReference(auth.currentUser?.uid ?: "")
+        val auth = FirebaseAuth.getInstance()
         auth.createUserWithEmailAndPassword(email.value, password.value).addOnCompleteListener { task ->
             if(task.isSuccessful) {
-                database.apply {
+                FirebaseDatabase.getInstance().getReference(auth.currentUser?.uid ?: "").apply {
                     child("uid").setValue(auth.currentUser?.uid)
                     child("name").setValue(name.value)
                     child("email").setValue(email.value)
                     child("password").setValue(password.value)
                 }
                 Toast.makeText(context, context.getString(R.string.register_complete), Toast.LENGTH_SHORT).show()
-                navController.navigate(context.getString(R.string.register_complete))
+                navController.navigate(context.getString(R.string.nav_route_login))
             }
+            else Toast.makeText(context, context.getString(R.string.register_fail), Toast.LENGTH_SHORT).show()
         }
     }
 }

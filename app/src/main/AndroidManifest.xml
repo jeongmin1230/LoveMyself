@@ -18,6 +18,7 @@
             android:name=".screen.Login"
             android:exported="true"
             android:label="칭찬 일기장"
+            android:windowSoftInputMode="adjustResize"
             android:theme="@style/Theme.LoveMyself">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
