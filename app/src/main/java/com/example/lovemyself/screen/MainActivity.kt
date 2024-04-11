@@ -23,7 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.lovemyself.Appbar
+import com.example.lovemyself.etc.Appbar
 import com.example.lovemyself.R
 import com.example.lovemyself.ui.theme.BasicBlack
 import java.time.LocalDate

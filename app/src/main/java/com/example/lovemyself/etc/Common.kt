@@ -1,4 +1,4 @@
-package com.example.lovemyself
+package com.example.lovemyself.etc
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -27,6 +27,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.example.lovemyself.R
 import com.example.lovemyself.ui.theme.BasicBlack
 
 @Composable

@@ -43,14 +43,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.lovemyself.EnterForm
+import com.example.lovemyself.etc.EnterForm
 import com.example.lovemyself.R
 import com.example.lovemyself.ui.theme.BasicBlack
 import com.example.lovemyself.ui.theme.LoveMyselfTheme
 import com.example.lovemyself.view_model.LoginViewModel
 
 class Login : ComponentActivity() {
-
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,11 +92,10 @@ fun LoginScreen(navController: NavHostController) {
         verticalArrangement = Arrangement.Center
     ) {
         Image(
-            painter = painterResource(id = R.drawable.ic_praise),
+            painter = painterResource(id = R.drawable.ic_app_identity),
             contentDescription = stringResource(id = R.string.praise_description),
-            modifier = Modifier.size(60.dp)
+            modifier = Modifier.size(200.dp)
         )
-        Spacer(modifier = Modifier.height(12.dp))
         EnterForm(
             what = stringResource(id = R.string.email),
             tf = loginViewModel.email,

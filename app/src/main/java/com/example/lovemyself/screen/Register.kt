@@ -22,8 +22,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.lovemyself.Appbar
-import com.example.lovemyself.EnterForm
+import com.example.lovemyself.etc.Appbar
+import com.example.lovemyself.etc.EnterForm
 import com.example.lovemyself.R
 import com.example.lovemyself.ui.theme.BasicBlack
 import com.example.lovemyself.view_model.RegisterViewModel
