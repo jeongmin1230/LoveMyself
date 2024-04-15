@@ -1,5 +1,6 @@
 package com.example.lovemyself.screen
 
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
@@ -27,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,6 +47,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.lovemyself.etc.EnterForm
 import com.example.lovemyself.R
+import com.example.lovemyself.etc.getStoredUserEmail
+import com.example.lovemyself.etc.getStoredUserPassword
 import com.example.lovemyself.ui.theme.BasicBlack
 import com.example.lovemyself.ui.theme.LoveMyselfTheme
 import com.example.lovemyself.view_model.LoginViewModel
@@ -62,15 +66,15 @@ class Login : ComponentActivity() {
                 ) {
                     val navController = rememberNavController()
                     val context = LocalContext.current
-                    NavHost(navController, startDestination = context.getString(R.string.nav_route_login)) {
-                        composable(context.getString(R.string.nav_route_login)) {
-                            LoginScreen(navController)
+                    NavHost(navController, startDestination = context.getString(R.string.nav_route_start)) {
+                        composable(context.getString(R.string.nav_route_start)) {
+                            LoginScreen(context, navController)
                         }
                         composable(context.getString(R.string.register)) {
                             RegisterScreen(navController)
                         }
                         composable(context.getString(R.string.nav_route_main)) {
-                            MainScreen(navController)
+                            MainScreen()
                         }
                     }
                 }
@@ -80,69 +84,77 @@ class Login : ComponentActivity() {
 }
 
 @Composable
-fun LoginScreen(navController: NavHostController) {
-    val context = LocalContext.current
+fun LoginScreen(context: Context, navController: NavHostController) {
     val loginViewModel = LoginViewModel()
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .verticalScroll(rememberScrollState())
-            .padding(all = 12.dp)
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.Center
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_app_identity),
-            contentDescription = stringResource(id = R.string.praise_description),
-            modifier = Modifier.size(200.dp)
-        )
-        EnterForm(
-            what = stringResource(id = R.string.email),
-            tf = loginViewModel.email,
-            visualTransformation = VisualTransformation.None,
-            keyboardType = KeyboardType.Email
-        )
-        EnterForm(
-            what = stringResource(id = R.string.password),
-            tf = loginViewModel.password,
-            visualTransformation = PasswordVisualTransformation('*'),
-            keyboardType = KeyboardType.Text
-        )
-        Button(
-            onClick = {
-                if(loginViewModel.email.value.isNotEmpty() && loginViewModel.password.value.isNotEmpty()) loginViewModel.login(context, navController)
-                else Toast.makeText(context, context.getString(R.string.warning), Toast.LENGTH_SHORT).show()
-                      },
-            modifier = Modifier
-                .height(48.dp)
-                .fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFFFFCDD2),
-                disabledContainerColor = Color(0xFFFFCDD2))
-        ) {
-            Text(
-                text = stringResource(id = R.string.do_login),
-                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold, color = BasicBlack)
-            )
+    if(getStoredUserEmail(context).isNotEmpty() && getStoredUserPassword(context).isNotEmpty()) {
+        loginViewModel.email.value = getStoredUserEmail(context)
+        loginViewModel.password.value = getStoredUserPassword(context)
+        LaunchedEffect(true) {
+            loginViewModel.login(context, navController)
         }
-        Text(
-            text = stringResource(id = R.string.or),
-            style = MaterialTheme.typography.labelMedium.copy(BasicBlack),
-            modifier = Modifier.padding(vertical = 4.dp)
-        )
-        ChooseTypeBox(
-            bg = Color(0xFFFCEDEE),
-            painterResource = painterResource(id = R.drawable.ic_google),
-            description = stringResource(id = R.string.google_description),
-            text = stringResource(id = R.string.sing_in_up_google)
-        ) {}
-        ChooseTypeBox(
-            bg = Color(0xFFFCEDEE),
-            painterResource = null,
-            description = stringResource(id = R.string.register),
-            text = stringResource(id = R.string.register)
-        ) { navController.navigate(context.getString(R.string.register)) }
+    } else {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .padding(all = 12.dp)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_app_identity),
+                contentDescription = stringResource(id = R.string.praise_description),
+                modifier = Modifier.size(200.dp)
+            )
+            EnterForm(
+                what = stringResource(id = R.string.email),
+                tf = loginViewModel.email,
+                visualTransformation = VisualTransformation.None,
+                keyboardType = KeyboardType.Email
+            )
+            EnterForm(
+                what = stringResource(id = R.string.password),
+                tf = loginViewModel.password,
+                visualTransformation = PasswordVisualTransformation('*'),
+                keyboardType = KeyboardType.Text
+            )
+            Button(
+                onClick = {
+                    if(loginViewModel.email.value.isNotEmpty() && loginViewModel.password.value.isNotEmpty()) loginViewModel.login(context, navController)
+                    else Toast.makeText(context, context.getString(R.string.warning), Toast.LENGTH_SHORT).show()
+                },
+                modifier = Modifier
+                    .height(48.dp)
+                    .fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFFFCDD2),
+                    disabledContainerColor = Color(0xFFFFCDD2))
+            ) {
+                Text(
+                    text = stringResource(id = R.string.do_login),
+                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold, color = BasicBlack)
+                )
+            }
+            Text(
+                text = stringResource(id = R.string.or),
+                style = MaterialTheme.typography.labelMedium.copy(BasicBlack),
+                modifier = Modifier.padding(vertical = 4.dp)
+            )
+            ChooseTypeBox(
+                bg = Color(0xFFFCEDEE),
+                painterResource = painterResource(id = R.drawable.ic_google),
+                description = stringResource(id = R.string.google_description),
+                text = stringResource(id = R.string.sing_in_up_google)
+            ) {}
+            ChooseTypeBox(
+                bg = Color(0xFFFCEDEE),
+                painterResource = null,
+                description = stringResource(id = R.string.register),
+                text = stringResource(id = R.string.register)
+            ) { navController.navigate(context.getString(R.string.register)) }
+        }
     }
+
 }
 
 @Composable

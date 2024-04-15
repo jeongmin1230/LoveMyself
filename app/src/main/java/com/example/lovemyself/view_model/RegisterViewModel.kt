@@ -26,7 +26,7 @@ class RegisterViewModel: ViewModel() {
                     child("password").setValue(password.value)
                 }
                 Toast.makeText(context, context.getString(R.string.register_complete), Toast.LENGTH_SHORT).show()
-                navController.navigate(context.getString(R.string.nav_route_login))
+                navController.navigate(context.getString(R.string.nav_route_start))
             }
             else Toast.makeText(context, context.getString(R.string.register_fail), Toast.LENGTH_SHORT).show()
         }

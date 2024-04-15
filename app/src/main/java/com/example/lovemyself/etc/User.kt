@@ -1,7 +1,9 @@
 package com.example.lovemyself.etc
 
 object User {
-    val email = ""
-    val password = ""
+    var uid = ""
+    var name = ""
+    var email = ""
+    var password = ""
 
 }

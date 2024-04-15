@@ -1,9 +1,10 @@
 <resources>
     <string name="app_name">LoveMyself</string>
-    <string name="nav_route_login">login</string>
+    <string name="nav_route_start">start</string>
     <string name="nav_route_main">main</string>
     <string name="nav_route_register">register</string>
     <string name="title_activity_login">Login</string>
+    <string name="title_activity_main">Main</string>
     <string name="login_screen">로그인</string>
     <string name="main_screen">메인</string>
     <string name="email">이메일</string>
@@ -20,4 +21,7 @@
     <string name="login_fail">로그인에 실패 했습니다.</string>
     <string name="today_mention">오늘은 %s월 %s일</string>
     <string name="please_praise_for_me">나를 위한 칭찬 한 마디 해 주세요.</string>
+    <string name="go_write">한마디 작성 하기</string>
+    <string name="write">작성</string>
+    <string name="already_write">이미 오늘의 칭찬을 작성 하였습니다.</string>
 </resources>
