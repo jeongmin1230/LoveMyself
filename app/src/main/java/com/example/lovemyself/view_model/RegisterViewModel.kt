@@ -23,7 +23,6 @@ class RegisterViewModel: ViewModel() {
                     child("uid").setValue(auth.currentUser?.uid)
                     child("name").setValue(name.value)
                     child("email").setValue(email.value)
-                    child("password").setValue(password.value)
                 }
                 Toast.makeText(context, context.getString(R.string.register_complete), Toast.LENGTH_SHORT).show()
                 navController.navigate(context.getString(R.string.nav_route_start))

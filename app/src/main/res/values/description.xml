@@ -4,4 +4,6 @@
     <string name="back_description">뒤로 가기</string>
     <string name="google_description">구글 계정</string>
     <string name="did_description">오늘 완료했나요</string>
+    <string name="drawer_description">drawer</string>
+    <string name="close_description">닫기</string>
 </resources>

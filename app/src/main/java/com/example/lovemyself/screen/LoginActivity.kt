@@ -74,7 +74,7 @@ class Login : ComponentActivity() {
                             RegisterScreen(navController)
                         }
                         composable(context.getString(R.string.nav_route_main)) {
-                            MainScreen()
+                            WholeScreen()
                         }
                     }
                 }

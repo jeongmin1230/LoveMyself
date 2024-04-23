@@ -19,9 +19,13 @@
     <string name="register_complete">회원가입을 완료 했습니다.\n회원가입 한 아이디로 로그인 해 주세요</string>]
     <string name="register_fail">회원가입에 실패 했습니다. 네트워크 연결을 확인하고 다시 시도 해 주세요.</string>
     <string name="login_fail">로그인에 실패 했습니다.</string>
+    <string name="fail_load_data">데이터를 가져오지 못했습니다.</string>
+    <string name="hello">%s님, 안녕하세요?</string>
     <string name="today_mention">오늘은 %s월 %s일</string>
     <string name="please_praise_for_me">나를 위한 칭찬 한 마디 해 주세요.</string>
     <string name="go_write">한마디 작성 하기</string>
+    <string name="done">칭찬을 등록하였습니다!</string>
+    <string name="fail">등록에 실패하였습니다.\n잠시 후 다시 시도 해 주세</string>
     <string name="write">작성</string>
     <string name="already_write">이미 오늘의 칭찬을 작성 하였습니다.</string>
 </resources>
