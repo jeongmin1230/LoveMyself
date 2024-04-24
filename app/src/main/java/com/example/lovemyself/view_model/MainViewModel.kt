@@ -14,6 +14,7 @@ class MainViewModel: ViewModel() {
     val date = mutableStateOf("")
 
     fun checkWeek(dayList: MutableList<String>){
+        weekResult.value = emptyList()
         FirebaseDatabase.getInstance().getReference("${User.uid}/praise").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (i in 0 until 7) {
@@ -23,7 +24,6 @@ class MainViewModel: ViewModel() {
                         weekResult.value += false
                     }
                 }
-                println("??? : ${weekResult.value}")
             }
 
             override fun onCancelled(error: DatabaseError) {

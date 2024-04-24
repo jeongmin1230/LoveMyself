@@ -28,4 +28,7 @@
     <string name="fail">등록에 실패하였습니다.\n잠시 후 다시 시도 해 주세</string>
     <string name="write">작성</string>
     <string name="already_write">이미 오늘의 칭찬을 작성 하였습니다.</string>
+    <string name="screen_lock">화면 잠금</string>
+    <string name="enter_pin">화면 잠금에 사용할 PIN 4자리를 입력 해 주세요.</string>
+    <string name="alarm">알림설정</string>
 </resources>

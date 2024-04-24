@@ -1,5 +1,6 @@
 package com.example.lovemyself.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringArrayResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.lovemyself.R
 import com.example.lovemyself.etc.Appbar
@@ -23,11 +23,12 @@ import com.example.lovemyself.ui.theme.BasicBlack
 import com.example.lovemyself.view_model.CollectViewModel
 
 @Composable
-fun CollectScreen(dayList: MutableList<String>) {
+fun CollectScreen(dayList: MutableList<String>, onClickBack: () -> Unit) {
     val collectViewModel = CollectViewModel()
     val praiseMapState = remember { mutableStateOf(emptyMap<String, String>()) }
     collectViewModel.loadPraise(dayList) { praiseMapState.value = it }
-    Column {
+    Column(Modifier.background(Color.White)) {
+        Appbar(screenName = stringArrayResource(id = R.array.menu_item)[2]) { onClickBack() }
         praiseMapState.value.forEach { (day, praise) ->
             ShowPraise(day.substring(5, 10).replace("-", "/"), if(praise == "null") "" else praise)
         }

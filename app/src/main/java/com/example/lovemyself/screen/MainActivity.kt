@@ -13,6 +13,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -83,23 +84,23 @@ fun WholeScreen() {
     for (i in 0 until 7) {
         dayList.add(LocalDate.now().minusDays(LocalDate.now().dayOfWeek.value.toLong()).plusDays(i.toLong()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
     }
-    LaunchedEffect(true) { mainViewModel.checkWeek(dayList) }
-
-    MyDrawer(mainNav, drawerState, scope) {
-        Column(
-            modifier = Modifier
-                .background(Color.White)
-                .fillMaxSize()
-        ) {
-            Image(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_drawer),
-                contentDescription = stringResource(id = R.string.drawer_description),
-                modifier = Modifier
-                    .padding(all = 8.dp)
-                    .clickable { scope.launch { drawerState.open() } }
-            )
-            NavHost(navController = mainNav, screenArray[0]) {
-                composable(screenArray[0]) {
+    NavHost(navController = mainNav, screenArray[0]) {
+        composable(screenArray[0]) {
+            LaunchedEffect(weekResult) { mainViewModel.checkWeek(dayList) }
+            ScreenLockScreen()
+            MyDrawer(mainNav, drawerState, scope) {
+                Column(
+                    modifier = Modifier
+                        .background(Color.White)
+                        .fillMaxHeight()
+                ) {
+                    Image(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_drawer),
+                        contentDescription = stringResource(id = R.string.drawer_description),
+                        modifier = Modifier
+                            .padding(all = 10.dp)
+                            .clickable { scope.launch { drawerState.open() } }
+                    )
                     if(weekResult.value.isEmpty()) {
                         Text(
                             text = stringResource(id = R.string.fail_load_data),
@@ -107,26 +108,27 @@ fun WholeScreen() {
                             modifier = Modifier.fillMaxWidth()
                         )
                     } else {
-                        MainScreen(weekResult)
+                        MainScreen(weekResult, weekResult.value[LocalDate.now().dayOfWeek.value])
                     }
                 }
-                composable(screenArray[1]) {
-                    WriteScreen { mainNav.popBackStack() }
-                }
-                composable(screenArray[2]) {
-                    CollectScreen(dayList)
-                }
-                composable(screenArray[3]) {
-                    SettingsScreen()
-                }
             }
+        }
+        composable(screenArray[1]) {
+            WriteScreen { mainNav.popBackStack() }
+        }
+        composable(screenArray[2]) {
+            CollectScreen(dayList) { mainNav.popBackStack() }
+        }
+        composable(screenArray[3]) {
+            SettingsScreen { mainNav.popBackStack() }
         }
     }
 }
 
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MainScreen(weekState: MutableState<List<Boolean>>) {
+fun MainScreen(weekState: MutableState<List<Boolean>>, doneToday: Boolean) {
     val dateFormat = LocalDate.now().toString().substring(5, 10).split("-")
     Column {
         ShowWeek(LocalDate.now(), weekState)
@@ -138,13 +140,14 @@ fun MainScreen(weekState: MutableState<List<Boolean>>) {
                 .fillMaxWidth()
                 .border(BorderStroke(1.dp, Color.LightGray))
         ) {
+            val today = if(doneToday) stringResource(id = R.string.already_write) else stringResource(id = R.string.please_praise_for_me)
             Text(
                 text = stringResource(id = R.string.today_mention).format(dateFormat[0], dateFormat[1]),
                 style = MaterialTheme.typography.bodyMedium.copy(textAlign = TextAlign.Center, color = BasicBlack),
                 modifier = Modifier.padding(top = 10.dp)
             )
             Text(
-                text = stringResource(id = R.string.please_praise_for_me),
+                text = today,
                 style = MaterialTheme.typography.bodyMedium.copy(textAlign = TextAlign.Center, color = BasicBlack, fontWeight = FontWeight.Bold),
                 modifier = Modifier.padding(bottom = 10.dp)
             )
