@@ -23,12 +23,12 @@ import com.example.lovemyself.ui.theme.BasicBlack
 import com.example.lovemyself.view_model.CollectViewModel
 
 @Composable
-fun CollectScreen(dayList: MutableList<String>, onClickBack: () -> Unit) {
+fun CollectScreen(dayList: MutableList<String>, backToMain: () -> Unit) {
     val collectViewModel = CollectViewModel()
     val praiseMapState = remember { mutableStateOf(emptyMap<String, String>()) }
     collectViewModel.loadPraise(dayList) { praiseMapState.value = it }
     Column(Modifier.background(Color.White)) {
-        Appbar(screenName = stringArrayResource(id = R.array.menu_item)[2]) { onClickBack() }
+        Appbar(screenName = stringArrayResource(id = R.array.menu_item)[2]) { backToMain() }
         praiseMapState.value.forEach { (day, praise) ->
             ShowPraise(day.substring(5, 10).replace("-", "/"), if(praise == "null") "" else praise)
         }

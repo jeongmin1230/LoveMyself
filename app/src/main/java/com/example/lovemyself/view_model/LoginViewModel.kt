@@ -23,13 +23,13 @@ class LoginViewModel: ViewModel() {
     }
     private val auth = FirebaseAuth.getInstance()
 
-    fun login(context: Context, navController: NavHostController) {
+    fun login(context: Context) {
         auth.signInWithEmailAndPassword(email.value.trim(), password.value.trim())
             .addOnCompleteListener { task ->
                 if(task.isSuccessful) {
                     User.email = email.value.trim()
                     User.password = password.value.trim()
-                    getUserData(context, auth.uid ?: "", email.value, password.value, navController)
+                    getUserData(context, auth.uid ?: "", email.value, password.value)
                 } else {
                     Toast.makeText(context, context.getString(R.string.login_fail), Toast.LENGTH_SHORT).show()
                 }

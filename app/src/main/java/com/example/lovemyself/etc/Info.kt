@@ -40,13 +40,12 @@ fun autoLogin(context: Context, isSave: Boolean, name: String, email: String, pa
     }
 }
 
-fun getUserData(context: Context, uid: String, email: String, password: String, navController: NavHostController) {
+fun getUserData(context: Context, uid: String, email: String, password: String) {
     User.uid = uid
     FirebaseDatabase.getInstance().getReference(uid).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val name = snapshot.child("name").getValue(String::class.java) ?: ""
                 User.name = name
-                navController.navigate(context.getString(R.string.nav_route_main))
                 autoLogin(context, true, name, email, password)
                 val intent = Intent(context, MainActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -56,5 +55,6 @@ fun getUserData(context: Context, uid: String, email: String, password: String, 
             override fun onCancelled(error: DatabaseError) {
             }
 
-        })
+        }
+    )
 }

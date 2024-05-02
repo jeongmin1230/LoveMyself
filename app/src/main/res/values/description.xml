@@ -6,4 +6,5 @@
     <string name="did_description">오늘 완료했나요</string>
     <string name="drawer_description">drawer</string>
     <string name="close_description">닫기</string>
+    <string name="pin_state_description">pin 입력 상태</string>
 </resources>

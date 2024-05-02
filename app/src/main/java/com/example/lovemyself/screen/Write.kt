@@ -29,12 +29,12 @@ import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun WriteScreen(onClickBack: () -> Unit) {
+fun WriteScreen(backToMain: () -> Unit) {
     val context = LocalContext.current
     val writeViewModel = WriteViewModel()
     writeViewModel.date = LocalDate.now().toString()
     Column(Modifier.background(Color.White)) {
-        Appbar(screenName = stringArrayResource(id = R.array.menu_item)[1]) { onClickBack() }
+        Appbar(screenName = stringArrayResource(id = R.array.menu_item)[1]) { backToMain() }
         Column(Modifier.padding(all = 8.dp)) {
             EnterForm(
                 what = "",
@@ -43,7 +43,7 @@ fun WriteScreen(onClickBack: () -> Unit) {
                 keyboardType = KeyboardType.Text
             )
             Button(
-                onClick = { if(writeViewModel.praise.value.trim().isNotEmpty()) writeViewModel.write(context){ onClickBack() } },
+                onClick = { if(writeViewModel.praise.value.trim().isNotEmpty()) writeViewModel.write(context){ backToMain() } },
                 modifier = Modifier.height(48.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFFFFCDD2).copy(0.4f),

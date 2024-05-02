@@ -11,7 +11,7 @@ class CollectViewModel: ViewModel() {
     val praiseList = mutableMapOf<String, String>()
 
     fun loadPraise(dayList: MutableList<String>, response: (Map<String, String>) -> Unit) {
-        FirebaseDatabase.getInstance().getReference("${User.uid}/praise").addListenerForSingleValueEvent(object : ValueEventListener {
+        FirebaseDatabase.getInstance().getReference("${User.uid}/praise").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for(i in 0 .. 6) {
                     val dayPraise = snapshot.child(dayList[i])

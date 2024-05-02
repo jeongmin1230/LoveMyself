@@ -15,7 +15,7 @@
         android:theme="@style/Theme.LoveMyself"
         tools:targetApi="31">
         <activity
-            android:name=".screen.Login"
+            android:name=".screen.LoginActivity"
             android:exported="true"
             android:label="칭찬 일기장"
             android:windowSoftInputMode="adjustResize"

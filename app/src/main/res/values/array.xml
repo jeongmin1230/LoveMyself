@@ -6,4 +6,9 @@
         <item>모아 보기</item>
         <item>설정</item>
     </array>
+    <array name="nav">
+        <item>first</item>
+        <item>setting_time</item>
+        <item>setting_pin</item>
+    </array>
 </resources>

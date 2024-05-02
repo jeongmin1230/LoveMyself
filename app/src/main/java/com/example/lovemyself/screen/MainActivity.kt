@@ -27,6 +27,7 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -44,6 +45,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.lovemyself.R
 import com.example.lovemyself.etc.MyDrawer
+import com.example.lovemyself.etc.User
 import com.example.lovemyself.ui.theme.BasicBlack
 import com.example.lovemyself.ui.theme.LoveMyselfTheme
 import com.example.lovemyself.view_model.MainViewModel
@@ -73,6 +75,8 @@ class MainActivity : ComponentActivity() {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun WholeScreen() {
+    val isLock = remember { mutableStateOf(false) }
+    val pin = remember { mutableStateOf("") }
     val mainViewModel = MainViewModel()
     val weekResult = remember { mainViewModel.weekResult }
     val screenArray = stringArrayResource(id = R.array.menu_item)
@@ -84,10 +88,15 @@ fun WholeScreen() {
     for (i in 0 until 7) {
         dayList.add(LocalDate.now().minusDays(LocalDate.now().dayOfWeek.value.toLong()).plusDays(i.toLong()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
     }
-    NavHost(navController = mainNav, screenArray[0]) {
+    ScreenLockScreen(isLock, pin, mainNav)
+
+    NavHost(navController = mainNav, if(isLock.value) "enter_pin" else screenArray[0]) {
+        composable("enter_pin") {
+            Pin(mainNav)
+        }
+
         composable(screenArray[0]) {
             LaunchedEffect(weekResult) { mainViewModel.checkWeek(dayList) }
-            ScreenLockScreen()
             MyDrawer(mainNav, drawerState, scope) {
                 Column(
                     modifier = Modifier

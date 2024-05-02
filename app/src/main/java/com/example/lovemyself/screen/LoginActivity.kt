@@ -53,7 +53,7 @@ import com.example.lovemyself.ui.theme.BasicBlack
 import com.example.lovemyself.ui.theme.LoveMyselfTheme
 import com.example.lovemyself.view_model.LoginViewModel
 
-class Login : ComponentActivity() {
+class LoginActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,7 +90,7 @@ fun LoginScreen(context: Context, navController: NavHostController) {
         loginViewModel.email.value = getStoredUserEmail(context)
         loginViewModel.password.value = getStoredUserPassword(context)
         LaunchedEffect(true) {
-            loginViewModel.login(context, navController)
+            loginViewModel.login(context)
         }
     } else {
         Column(
@@ -120,7 +120,7 @@ fun LoginScreen(context: Context, navController: NavHostController) {
             )
             Button(
                 onClick = {
-                    if(loginViewModel.email.value.isNotEmpty() && loginViewModel.password.value.isNotEmpty()) loginViewModel.login(context, navController)
+                    if(loginViewModel.email.value.isNotEmpty() && loginViewModel.password.value.isNotEmpty()) loginViewModel.login(context)
                     else Toast.makeText(context, context.getString(R.string.warning), Toast.LENGTH_SHORT).show()
                 },
                 modifier = Modifier
