@@ -34,18 +34,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
 @Composable
-fun ScreenLockScreen(isLock: MutableState<Boolean>, pin: MutableState<String>, mainNav: NavHostController) {
-    lockState(isLock, pin)
-    println("lockState : ${isLock.value}")
-    println("pin : ${pin.value}")
-    User.screenPin = pin.value
-    println("User.screenPin : ${User.screenPin}")
-    if(isLock.value) Pin(mainNav)
-}
-
-
-@Composable
-fun Pin(mainNav: NavHostController) {
+fun Pin(isLock: MutableState<Boolean>) {
     val context = LocalContext.current
     val pin = remember { mutableStateOf("") }
     val numList = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "", "0", "")
@@ -89,10 +78,14 @@ fun Pin(mainNav: NavHostController) {
             modifier = Modifier.weight(0.6f)
         )
     }
-    if(User.screenPin == pin.value) mainNav.navigate("홈")
-    else if(User.screenPin != pin.value && pin.value.length == 4) {
-        Toast.makeText(context, context.getString(R.string.incorrect_pin), Toast.LENGTH_SHORT).show()
-        pin.value = ""
+    pin.value.isNotEmpty().apply {
+        if(User.screenPin == pin.value ) {
+            isLock.value = false
+        }
+        else if(User.screenPin != pin.value && pin.value.length == 4) {
+            Toast.makeText(context, context.getString(R.string.incorrect_pin), Toast.LENGTH_SHORT).show()
+            pin.value = ""
+        }
     }
 }
 
@@ -102,8 +95,8 @@ fun lockState(isLock: MutableState<Boolean>, pin: MutableState<String>) {
             if(snapshot.child("value").getValue(Boolean::class.java) == true) {
                 isLock.value = true
                 pin.value = snapshot.child("text").getValue(String::class.java) ?: ""
-                println("snapshot.child(\"text\").getValue(String::class.java) ?: \"\" : ${snapshot.child("text").getValue(String::class.java) ?: ""}")
-            } else println("no lock")
+                User.screenPin = pin.value
+            } else isLock.value = false
 
         }
 
@@ -111,5 +104,4 @@ fun lockState(isLock: MutableState<Boolean>, pin: MutableState<String>) {
             println("error : ${error.message}")
         }
     })
-    println("isLock ${isLock.value}")
 }

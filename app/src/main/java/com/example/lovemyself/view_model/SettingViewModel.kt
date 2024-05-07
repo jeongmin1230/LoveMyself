@@ -62,7 +62,6 @@ class SettingViewModel: ViewModel() {
             override fun onCancelled(error: DatabaseError) {
             }
         })
-        User.screenPin = pin
         println("settingVM pin : $pin")
         return pin
     }

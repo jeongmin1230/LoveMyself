@@ -84,43 +84,46 @@ fun WholeScreen() {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     mainViewModel.date.value = LocalDate.now().toString()
+    val startOfWeek = LocalDate.now().minusDays(LocalDate.now().dayOfWeek.value.toLong())
+
     val dayList = mutableListOf<String>()
     for (i in 0 until 7) {
-        dayList.add(LocalDate.now().minusDays(LocalDate.now().dayOfWeek.value.toLong()).plusDays(i.toLong()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+        dayList.add(startOfWeek.plusDays(i.toLong()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
     }
-    ScreenLockScreen(isLock, pin, mainNav)
+    LaunchedEffect(true) { lockState(isLock, pin) }
 
-    NavHost(navController = mainNav, if(isLock.value) "enter_pin" else screenArray[0]) {
-        composable("enter_pin") {
-            Pin(mainNav)
-        }
-
+    NavHost(navController = mainNav, screenArray[0]) {
         composable(screenArray[0]) {
-            LaunchedEffect(weekResult) { mainViewModel.checkWeek(dayList) }
-            MyDrawer(mainNav, drawerState, scope) {
-                Column(
-                    modifier = Modifier
-                        .background(Color.White)
-                        .fillMaxHeight()
-                ) {
-                    Image(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_drawer),
-                        contentDescription = stringResource(id = R.string.drawer_description),
+            if(isLock.value) {
+                Pin(isLock)
+            } else {
+                LaunchedEffect(weekResult) { mainViewModel.checkWeek(dayList) }
+                MyDrawer(mainNav, drawerState, scope) {
+                    Column(
                         modifier = Modifier
-                            .padding(all = 10.dp)
-                            .clickable { scope.launch { drawerState.open() } }
-                    )
-                    if(weekResult.value.isEmpty()) {
-                        Text(
-                            text = stringResource(id = R.string.fail_load_data),
-                            style = MaterialTheme.typography.bodyLarge.copy(textAlign = TextAlign.Center, color = BasicBlack),
-                            modifier = Modifier.fillMaxWidth()
+                            .background(Color.White)
+                            .fillMaxHeight()
+                    ) {
+                        Image(
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_drawer),
+                            contentDescription = stringResource(id = R.string.drawer_description),
+                            modifier = Modifier
+                                .padding(all = 10.dp)
+                                .clickable { scope.launch { drawerState.open() } }
                         )
-                    } else {
-                        MainScreen(weekResult, weekResult.value[LocalDate.now().dayOfWeek.value])
+                        if(weekResult.value.isEmpty()) {
+                            Text(
+                                text = stringResource(id = R.string.fail_load_data),
+                                style = MaterialTheme.typography.bodyLarge.copy(textAlign = TextAlign.Center, color = BasicBlack),
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        } else {
+                            MainScreen(dayList, weekResult)
+                        }
                     }
                 }
             }
+
         }
         composable(screenArray[1]) {
             WriteScreen { mainNav.popBackStack() }
@@ -137,10 +140,10 @@ fun WholeScreen() {
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MainScreen(weekState: MutableState<List<Boolean>>, doneToday: Boolean) {
+fun MainScreen(dayList: MutableList<String>,weekState: MutableState<List<Boolean>>) {
     val dateFormat = LocalDate.now().toString().substring(5, 10).split("-")
     Column {
-        ShowWeek(LocalDate.now(), weekState)
+        ShowWeek(dayList, weekState)
         Spacer(modifier = Modifier.height(10.dp))
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -149,7 +152,7 @@ fun MainScreen(weekState: MutableState<List<Boolean>>, doneToday: Boolean) {
                 .fillMaxWidth()
                 .border(BorderStroke(1.dp, Color.LightGray))
         ) {
-            val today = if(doneToday) stringResource(id = R.string.already_write) else stringResource(id = R.string.please_praise_for_me)
+            val today = if(weekState.value[7 - LocalDate.now().dayOfWeek.value]) stringResource(id = R.string.already_write) else stringResource(id = R.string.please_praise_for_me)
             Text(
                 text = stringResource(id = R.string.today_mention).format(dateFormat[0], dateFormat[1]),
                 style = MaterialTheme.typography.bodyMedium.copy(textAlign = TextAlign.Center, color = BasicBlack),
@@ -166,17 +169,14 @@ fun MainScreen(weekState: MutableState<List<Boolean>>, doneToday: Boolean) {
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ShowWeek(today: LocalDate, state: MutableState<List<Boolean>>) {
+fun ShowWeek(dayList: MutableList<String>, state: MutableState<List<Boolean>>) {
     val text = listOf("일", "월", "화", "수", "목", "금", "토")
-    val days = mutableListOf<String>()
-    for(i in 0 until 7) {
-        days.add(today.minusDays(today.dayOfWeek.value.toLong()).plusDays(i.toLong()).format(DateTimeFormatter.ofPattern("MM/dd")))
-    }
+
     Row(verticalAlignment = Alignment.CenterVertically) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             if(state.value.size == 7) {
                 text.forEachIndexed { index, dOW ->
-                    DayOfWeekAndDays(dayOfWeek = dOW, day = days[index], did = state.value[index], modifier = Modifier.weight(1f))
+                    DayOfWeekAndDays(dayOfWeek = dOW, day = dayList[index].substring(5).replace("-", "/"), did = state.value[index], modifier = Modifier.weight(1f))
                 }
             }
         }

@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -87,10 +86,14 @@ fun SettingsScreen(backToMain: () -> Unit) {
             }
             composable(navRoute[2]) {
                 pinText.value = ""
-                EnterPin(navController, pinText, { settingViewModel.updateText(false, pinText.value) }){
-                    settingViewModel.updateValue(isAlarm = false, isOn = true)
-                    /* TODO
-                    navController.popBackStack() 하면 화면이 잠깐 나타 났다가 사라 져서 일단 뒤로 가기는 안 해 놓음 .. */
+                Column {
+                    Appbar(stringResource(id = R.string.screen_lock)) {
+                        settingViewModel.updateValue(isAlarm = false, isOn = false)
+                        navController.popBackStack() }
+                    EnterPin(pinText, { settingViewModel.updateText(false, pinText.value) }){
+                        settingViewModel.updateValue(isAlarm = false, isOn = true)
+                        navController.popBackStack()
+                    }
                 }
             }
         }
@@ -143,10 +146,9 @@ fun EnterAlarm(navController: NavHostController) {
 }
 
 @Composable
-fun EnterPin(navController: NavHostController, pin: MutableState<String>, updatePin: () -> Unit, updateLock: () -> Unit) {
+fun EnterPin(pin: MutableState<String>, updatePin: () -> Unit, updateLock: () -> Unit) {
     val numList = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "", "0", "")
     Column {
-        Appbar(stringResource(id = R.string.screen_lock)) { navController.popBackStack() }
         Text(
             text = stringResource(id = R.string.enter_pin),
             style = MaterialTheme.typography.bodyMedium.copy(textAlign = TextAlign.Center, color = BasicBlack),
