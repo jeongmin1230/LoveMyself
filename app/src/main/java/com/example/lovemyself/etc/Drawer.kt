@@ -1,5 +1,6 @@
 package com.example.lovemyself.etc
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -23,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -36,6 +38,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyDrawer(drawerNavController: NavHostController, drawerState: DrawerState, scope: CoroutineScope, content: @Composable () -> Unit) {
+    val context = LocalContext.current
     val items = listOf(
         ImageVector.vectorResource(R.drawable.ic_home),
         ImageVector.vectorResource(R.drawable.ic_write),
@@ -77,7 +80,8 @@ fun MyDrawer(drawerNavController: NavHostController, drawerState: DrawerState, s
                             onClick = {
                                 scope.launch { drawerState.close() }
                                 selectedItem.value = item
-                                drawerNavController.navigate(itemNames[index])
+                                if(selectedItem.value == item) Toast.makeText(context, context.getString(R.string.cannot_move), Toast.LENGTH_SHORT).show()
+                                else drawerNavController.navigate(itemNames[index])
                             },
                             shape = RectangleShape,
                             colors = NavigationDrawerItemDefaults.colors(

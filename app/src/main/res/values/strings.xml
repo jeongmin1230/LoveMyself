@@ -20,6 +20,7 @@
     <string name="register_fail">회원가입에 실패 했습니다. 네트워크 연결을 확인하고 다시 시도 해 주세요.</string>
     <string name="login_fail">로그인에 실패 했습니다.</string>
     <string name="fail_load_data">데이터를 가져오지 못했습니다.</string>
+    <string name="cannot_move">현재 화면입니다.</string>
     <string name="hello">%s님, 안녕하세요?</string>
     <string name="today_mention">오늘은 %s월 %s일</string>
     <string name="please_praise_for_me">나를 위한 칭찬 한 마디 해 주세요.</string>
