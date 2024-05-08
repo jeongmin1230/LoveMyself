@@ -45,12 +45,12 @@ fun MyDrawer(drawerNavController: NavHostController, drawerState: DrawerState, s
         ImageVector.vectorResource(R.drawable.ic_all),
         ImageVector.vectorResource(R.drawable.ic_settings)
     )
+    val currentDestination = drawerNavController.currentDestination?.route
     val itemNames = stringArrayResource(id = R.array.menu_item)
     val selectedItem = remember { mutableStateOf(items[0]) }
-    var gestureEnabled by remember { mutableStateOf(true) }
     ModalNavigationDrawer(
         drawerState = drawerState,
-        gesturesEnabled = gestureEnabled,
+        gesturesEnabled = true,
         drawerContent = {
             Column(modifier = Modifier
                 .background(Color.White)
@@ -80,7 +80,7 @@ fun MyDrawer(drawerNavController: NavHostController, drawerState: DrawerState, s
                             onClick = {
                                 scope.launch { drawerState.close() }
                                 selectedItem.value = item
-                                if(selectedItem.value == item) Toast.makeText(context, context.getString(R.string.cannot_move), Toast.LENGTH_SHORT).show()
+                                if(currentDestination == itemNames[index]) Toast.makeText(context, context.getString(R.string.cannot_move), Toast.LENGTH_SHORT).show()
                                 else drawerNavController.navigate(itemNames[index])
                             },
                             shape = RectangleShape,
