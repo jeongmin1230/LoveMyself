@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">LoveMyself</string>
+    <string name="app_name_kor">칭찬 일기장</string>
     <string name="nav_route_start">start</string>
     <string name="nav_route_main">main</string>
     <string name="nav_route_register">register</string>
@@ -38,6 +39,7 @@
     <string name="alarm">알림설정</string>
     <string name="please_click">반드시 숫자를 선택 후 아래에 텍스트를 확인 해 주세요.</string>
     <string name="confirm_alarm_time">%s %s시 %s분으로 설정 하시겠습니까?</string>
+    <string name="alarm_content">칭찬 일기를 써 주세요.</string>
     <string name="yes">예</string>
     <string name="no">아니오</string>
     <string name="success_to_setting_alarm_time">%s %s시 %s분 으로 알림 시간을 설정 했습니다.</string>

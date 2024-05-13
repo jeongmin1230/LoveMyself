@@ -1,5 +1,7 @@
 package com.example.lovemyself.screen
 
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -34,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -44,8 +47,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.lovemyself.R
+import com.example.lovemyself.etc.AlarmReceiver
 import com.example.lovemyself.etc.MyDrawer
-import com.example.lovemyself.etc.User
 import com.example.lovemyself.ui.theme.BasicBlack
 import com.example.lovemyself.ui.theme.LoveMyselfTheme
 import com.example.lovemyself.view_model.MainViewModel
@@ -91,6 +94,11 @@ fun WholeScreen() {
         dayList.add(startOfWeek.plusDays(i.toLong()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
     }
     LaunchedEffect(true) { lockState(isLock, pin) }
+    val intentFilter = IntentFilter().apply {
+        addAction(Intent.ACTION_POWER_CONNECTED)
+    }
+    val alarmReceiver = AlarmReceiver()
+    LocalContext.current.registerReceiver(alarmReceiver, intentFilter)
 
     NavHost(navController = mainNav, screenArray[0]) {
         composable(screenArray[0]) {

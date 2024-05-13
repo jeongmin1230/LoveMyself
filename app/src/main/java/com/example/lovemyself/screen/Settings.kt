@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -38,7 +39,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.compose.NavHost
@@ -94,8 +94,10 @@ fun SettingsScreen(backToMain: () -> Unit) {
                             settingViewModel.updateValue(isAlarm = true, isOn = false)
                             navController.popBackStack()},
                         updateTime = {
+                            settingViewModel.setAlarm(context, alarmText.value)
                             settingViewModel.updateText(true, alarmText.value)
                             settingViewModel.updateValue(isAlarm = true, isOn = true)
+                            navController.popBackStack()
                         }
                     )
                 }
@@ -206,13 +208,19 @@ fun EnterAlarm(alarmText: MutableState<String>, context: Context, onClickBack: (
             SelectTime(selectedTime = minute, list = minuteList, modifier = Modifier.weight(1f))
         }
         Spacer(modifier = Modifier.height(20.dp))
-        Text(
-            text = stringResource(id = R.string.setting),
-            style = MaterialTheme.typography.bodyMedium.copy(textAlign = TextAlign.Center, color = BasicBlack),
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .fillMaxWidth()
-                .clickable { if(time.value.isNotEmpty() && hour.value.isNotEmpty() && minute.value.isNotEmpty()) confirm.value = true }
-        )
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp)
+            .background(shape = CircleShape, color = Color.LightGray)
+            .clickable { if (time.value.isNotEmpty() && hour.value.isNotEmpty() && minute.value.isNotEmpty()) confirm.value = true }) {
+            Text(
+                text = stringResource(id = R.string.setting),
+                style = MaterialTheme.typography.bodyMedium.copy(BasicBlack),
+                modifier = Modifier.padding(vertical = 10.dp)
+            )
+        }
     }
 
     if(confirm.value) {
