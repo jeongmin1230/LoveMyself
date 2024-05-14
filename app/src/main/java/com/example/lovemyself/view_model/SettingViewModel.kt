@@ -112,7 +112,7 @@ class SettingViewModel: ViewModel() {
             set(Calendar.SECOND, 0)
             set(Calendar.AM_PM, if (text.split(" ")[0] == "AM") Calendar.AM else Calendar.PM)
         }
-        println("time : ${calendar.time}")
+        if(calendar.before(Calendar.getInstance())) calendar.add(Calendar.DAY_OF_MONTH, 1)
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
     }
 

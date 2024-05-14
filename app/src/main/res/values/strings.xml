@@ -37,6 +37,7 @@
     <string name="enter_pin">화면 잠금에 사용할 PIN 4자리를 입력 해 주세요.</string>
     <string name="success_to_setting_pin">pin 을 저장 했습니다.</string>
     <string name="alarm">알림설정</string>
+    <string name="warning_alarm">알림 설정을 사용하기 위해서는 알림 권한 허용이 필요합니다.\n권한을 설정 해 주세요.</string>
     <string name="please_click">반드시 숫자를 선택 후 아래에 텍스트를 확인 해 주세요.</string>
     <string name="confirm_alarm_time">%s %s시 %s분으로 설정 하시겠습니까?</string>
     <string name="alarm_content">칭찬 일기를 써 주세요.</string>

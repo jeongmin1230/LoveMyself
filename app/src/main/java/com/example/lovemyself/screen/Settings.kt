@@ -1,13 +1,17 @@
 package com.example.lovemyself.screen
 
+import android.app.Activity
+import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
+import android.os.Build
+import android.provider.Settings
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,10 +21,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -40,12 +41,15 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogProperties
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.lovemyself.R
 import com.example.lovemyself.etc.Appbar
+import com.example.lovemyself.etc.PinKeypad
+import com.example.lovemyself.etc.SettingDialog
 import com.example.lovemyself.ui.theme.BasicBlack
 import com.example.lovemyself.view_model.SettingViewModel
 
@@ -59,6 +63,7 @@ fun SettingsScreen(backToMain: () -> Unit) {
     val pinText = remember { mutableStateOf(settingViewModel.lockText())  }
     val lockValue = remember { settingViewModel.lockValue() }
     val navController = rememberNavController()
+    val showDialog = remember { mutableStateOf(false) }
     Column(modifier = Modifier
         .background(Color.White)
         .fillMaxSize()) {
@@ -68,11 +73,32 @@ fun SettingsScreen(backToMain: () -> Unit) {
                     Appbar(stringResource(id = R.string.setting)) { backToMain() }
                     SettingRow(text = stringResource(id = R.string.alarm), checked = alarmValue,
                         turnOn = {
-                            settingViewModel.updateValue(true, alarmValue.value)
-                            navController.navigate(navRoute[1]) },
+                            if(isNotificationPermissionGranted(context)) {
+                                settingViewModel.updateValue(true, alarmValue.value)
+                                navController.navigate(navRoute[1])
+                            }
+                            else {
+                                alarmValue.value = false
+                                showDialog.value = true
+                            }
+                        },
                         turnOff = {
                             settingViewModel.updateValue(true, alarmValue.value)
                         })
+                    if(showDialog.value) {
+                        SettingDialog(
+                            content = context.getString(R.string.warning_alarm),
+                            confirmAction = {
+                                showDialog.value = false
+                                if(isNotificationPermissionGranted(context)) {
+                                    alarmValue.value = true
+                                    navController.navigate(navRoute[1])
+                                    settingViewModel.updateValue(isAlarm = true, isOn = true)
+                                }
+                                requestNotificationPermission(context as Activity) }) {
+                            showDialog.value = false
+                        }
+                    }
                     SettingRow(text = stringResource(id = R.string.screen_lock), checked = lockValue,
                         turnOn = {
                             if(pinText.value.isNotEmpty()) settingViewModel.updateValue(false, lockValue.value)
@@ -108,7 +134,8 @@ fun SettingsScreen(backToMain: () -> Unit) {
                     Appbar(stringResource(id = R.string.screen_lock)) {
                         settingViewModel.updateValue(isAlarm = false, isOn = false)
                         navController.popBackStack() }
-                    EnterPin(pinText, { settingViewModel.updateText(false, pinText.value) }){
+                    EnterPin(pinText){
+                        settingViewModel.updateText(false, pinText.value)
                         settingViewModel.updateValue(isAlarm = false, isOn = true)
                         navController.popBackStack()
                     }
@@ -188,7 +215,7 @@ fun EnterAlarm(alarmText: MutableState<String>, context: Context, onClickBack: (
     val time = remember { mutableStateOf("") }
     val timeList = listOf("AM", "PM")
     val hour = remember { mutableStateOf("") }
-    val hourList = (1..12).toList().map { it.toString() }
+    val hourList = (0 .. 11).toList().map { it.toString() }
     val minute = remember { mutableStateOf("") }
     val minuteList = (0..59).toList().map { it.toString() }
     val confirm = remember { mutableStateOf(false) }
@@ -211,10 +238,11 @@ fun EnterAlarm(alarmText: MutableState<String>, context: Context, onClickBack: (
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 10.dp)
-            .background(shape = CircleShape, color = Color.LightGray)
-            .clickable { if (time.value.isNotEmpty() && hour.value.isNotEmpty() && minute.value.isNotEmpty()) confirm.value = true }) {
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp)
+                .background(shape = CircleShape, color = Color.LightGray)
+                .clickable {
+                    if (time.value.isNotEmpty() && hour.value.isNotEmpty() && minute.value.isNotEmpty()) confirm.value = true }) {
             Text(
                 text = stringResource(id = R.string.setting),
                 style = MaterialTheme.typography.bodyMedium.copy(BasicBlack),
@@ -224,82 +252,23 @@ fun EnterAlarm(alarmText: MutableState<String>, context: Context, onClickBack: (
     }
 
     if(confirm.value) {
-        AlertDialog(
-            containerColor = Color.White,
-            onDismissRequest = { confirm.value = false },
-            confirmButton = {
-                Text(
-                    text = stringResource(id = R.string.yes),
-                    style = MaterialTheme.typography.labelMedium.copy(Color.Blue),
-                    modifier = Modifier.clickable {
-                        confirm.value = false
-                        alarmText.value = time.value + " " + hour.value + ":" + minute.value
-                        updateTime()
-                        Toast.makeText(context, context.getString(R.string.success_to_setting_alarm_time).format(time.value, hour.value, minute.value), Toast.LENGTH_SHORT).show()
-                    })
-                            },
-            dismissButton = {
-                Text(
-                    text = stringResource(id = R.string.no),
-                    style = MaterialTheme.typography.labelMedium.copy(Color.Red),
-                    modifier = Modifier.clickable { confirm.value = false }) },
-            text = {
-                Text(
-                    text = stringResource(id = R.string.confirm_alarm_time).format(time.value, hour.value, minute.value),
-                    style = MaterialTheme.typography.bodyLarge.copy(BasicBlack)
-                )
-            },
-            modifier = Modifier.padding(horizontal = 16.dp),
-            properties = DialogProperties(dismissOnClickOutside = false, usePlatformDefaultWidth = false)
-        )
+        SettingDialog(
+            content = stringResource(id = R.string.confirm_alarm_time).format(time.value, hour.value, minute.value),
+            confirmAction = {
+                confirm.value = false
+                alarmText.value = time.value + " " + hour.value + ":" + minute.value
+                updateTime()
+                Toast.makeText(context, context.getString(R.string.success_to_setting_alarm_time).format(time.value, hour.value, minute.value), Toast.LENGTH_SHORT).show()
+            }) { confirm.value = false }
     }
 }
 
 @Composable
-fun EnterPin(pin: MutableState<String>, updatePin: () -> Unit, updateLock: () -> Unit) {
-    val numList = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "", "0", "")
-    Column {
-        Text(
-            text = stringResource(id = R.string.enter_pin),
-            style = MaterialTheme.typography.bodyMedium.copy(textAlign = TextAlign.Center, color = BasicBlack),
-            modifier = Modifier
-                .padding(vertical = 10.dp)
-                .fillMaxWidth()
-        )
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .weight(0.4f)
-                .fillMaxWidth()
-        ) {
-            pin.value.forEach { _ ->
-                PinState()
-            }
-        }
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
-            content = {
-                items(numList.size) {
-                    Text(
-                        text = numList[it],
-                        style = MaterialTheme.typography.displayMedium.copy(textAlign = TextAlign.Center, color = BasicBlack),
-                        modifier = Modifier
-                            .padding(vertical = 20.dp)
-                            .clickable { pin.value += numList[it] }
-                            .weight(1f)
-                    )
-                }
-            },
-            horizontalArrangement = Arrangement.Center,
-            verticalArrangement = Arrangement.Bottom,
-            modifier = Modifier.weight(0.6f)
-        )
-    }
-    if(pin.value.length == 4) {
-        updatePin()
-        updateLock()
-    }
+fun EnterPin(pin: MutableState<String>, update: () -> Unit) {
+    PinKeypad(
+        context = LocalContext.current,
+        pin = pin,
+        firstScreen = false) { if(pin.value.length == 4) update() }
 }
 
 @Composable
@@ -308,4 +277,19 @@ fun PinState() {
         imageVector = ImageVector.vectorResource(R.drawable.ic_circle),
         contentDescription = stringResource(id = R.string.pin_state_description)
     )
+}
+
+fun isNotificationPermissionGranted(context: Context): Boolean {
+    val notificationManager = ContextCompat.getSystemService(context, NotificationManager::class.java) as NotificationManager
+    return if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) notificationManager.areNotificationsEnabled() else true
+}
+
+fun requestNotificationPermission(activity: Activity) {
+    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+        intent.putExtra(Settings.EXTRA_APP_PACKAGE, activity.packageName)
+        activity.startActivityForResult(intent, 123)
+    } else {
+        ActivityCompat.requestPermissions(activity, arrayOf(android.Manifest.permission.ACCESS_NOTIFICATION_POLICY), 123)
+    }
 }
